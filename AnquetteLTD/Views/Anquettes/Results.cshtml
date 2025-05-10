@@ -1,0 +1,54 @@
+﻿@model AnquetteLTD.ViewModels.AnquetteResultsViewModel
+@{
+    ViewData["Title"] = "Results";
+}
+
+<h2 class="mb-3">@Model.Description</h2>
+
+<div class="row">
+    <div class="col-md-8">
+        <canvas id="resultsChart" height="@(40 + Model.Labels.Count * 40)"></canvas>
+    </div>
+
+    <div class="col-md-4">
+        <h5>Voters</h5>
+        <ul class="list-group">
+            @foreach (var v in Model.Voters)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    @v.Display
+                    <span class="badge bg-primary rounded-pill">@v.Votes</span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<a asp-action="Details" asp-route-id="@Model.AnquetteId" class="btn btn-secondary mt-3">Back to details</a>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        const ctx   = document.getElementById('resultsChart');
+        const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Labels));
+        const data   = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Counts));
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales:  {
+                    x: { beginAtZero: true, ticks: { precision:0 } }
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,66 @@
+﻿@model IEnumerable<AnquetteLTD.ViewModels.AnquetteListItemViewModel>
+@{
+    ViewData["Title"] = "All polls";
+}
+
+<h2>
+    @ViewData["Title"]
+    @* Show button only to authenticated users *@
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            + Create poll
+        </a>
+    }
+</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Description</th>
+            <th>Author</th>
+            <th class="text-center">Answers</th>
+            <th class="text-center">Multiple choice?</th>
+            <th class="text-center">Allow anonymous?</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Description</td>
+                <td>@p.AuthorUserName</td>
+                <td class="text-center">@p.AnswersCount</td>
+                <td class="text-center">
+                    @(p.IsMultipleChoice ? "✔︎" : "✖︎")
+                </td>
+                <td class="text-center">
+                    @(p.AllowAnonymous ? "✔︎" : "✖︎")
+                </td>
+                <td class="text-end">
+                    <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-secondary">Details</a>
+                </td>
+                <td class="text-end">
+                    @* fill button logic *@
+                    @{
+                        bool canGuestVote = p.AllowAnonymous || User.Identity?.IsAuthenticated == true;
+                        bool buttonActive = p.IsOpen && canGuestVote;
+                    }
+
+                    @if (buttonActive)
+                    {
+                        <a asp-action="Fill" asp-route-id="@p.Id" class="btn btn-sm btn-success me-1">
+                            Fill poll
+                        </a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-sm btn-success me-1" disabled>Fill poll</button>
+                    }
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,90 @@
+﻿@model AnquetteLTD.ViewModels.AnquetteCreateViewModel
+@{
+    ViewData["Title"] = "Create poll";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <form asp-action="Create">
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-check mb-2">
+                <input asp-for="IsEnabled" class="form-check-input" />
+                <label asp-for="IsEnabled" class="form-check-label">
+                    Is poll enabled? <br/>(warning: having a date range overrides this toggle, if you want to disable prematurely - remove the dates)
+                </label>
+            </div>
+
+            <div class="row g-2 mb-4">
+                <div class="col">
+                    <label asp-for="StartsAt" class="form-label">Opens at (UTC)</label>
+                    <input asp-for="StartsAt" class="form-control" type="datetime-local" />
+                </div>
+                <div class="col">
+                    <label asp-for="EndsAt" class="form-label">Closes at (UTC)</label>
+                    <input asp-for="EndsAt" class="form-control" type="datetime-local" />
+                </div>
+            </div>
+
+            <h4 class="mt-4">Answers</h4>
+            <div class="form-check mb-3">
+                <input  asp-for="IsMultipleChoice" class="form-check-input" />
+                <label asp-for="IsMultipleChoice" class="form-check-label">
+                    Allow voters to select multiple answers
+                </label>
+            </div>
+            <div class="form-check mb-4">
+                <input  asp-for="AllowAnonymous" class="form-check-input" />
+                <label asp-for="AllowAnonymous" class="form-check-label">
+                    Allow unauthenticated users to vote
+                </label>
+            </div>
+            <div id="answers-wrapper">
+                @for (int i = 0; i < (Model.Answers?.Count == 0 ? 4 : Model.Answers.Count); i++)
+                {
+                    <div class="mb-2 answer-line">
+                        <input type="text"
+                               name="Answers[@i]"
+                               value="@(Model.Answers.Count > i ? Model.Answers[i] : "")"
+                               class="form-control"
+                               placeholder="Answer @(i + 1)" />
+                    </div>
+                }
+            </div>
+
+            <button type="button"
+                    id="add-answer"
+                    class="btn btn-outline-secondary mb-3">
+                + Add another answer
+            </button>
+
+            <button type="submit" class="btn btn-primary">Create poll</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const wrapper = document.getElementById('answers-wrapper');
+            const addBtn  = document.getElementById('add-answer');
+
+            addBtn.addEventListener('click', () => {
+                const index = wrapper.querySelectorAll('.answer-line').length;
+                wrapper.insertAdjacentHTML('beforeend',
+                    `<div class="mb-2 answer-line">
+                         <input  type="text"
+                                 name="Answers[${index}]"
+                                 class="form-control"
+                                 placeholder="Answer ${index + 1}" />
+                     </div>`);
+            });
+        })();
+    </script>
+}

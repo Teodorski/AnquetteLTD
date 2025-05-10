@@ -1,0 +1,125 @@
+﻿@model AnquetteLTD.ViewModels.AnquetteEditViewModel
+@{
+    ViewData["Title"] = "Edit poll";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <form asp-action="Edit" asp-route-id="@Model.Id">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-4">
+                <input asp-for="IsMultipleChoice" class="form-check-input" />
+                <label asp-for="IsMultipleChoice" class="form-check-label">
+                    Allow voters to select multiple answers
+                </label>
+            </div>
+            <div class="form-check mb-4">
+                <input asp-for="AllowAnonymous" class="form-check-input" />
+                <label asp-for="AllowAnonymous" class="form-check-label">
+                    Allow unauthenticated users to vote
+                </label>
+            </div>
+            <div class="form-check mb-2">
+                <input asp-for="IsEnabled" class="form-check-input" />
+                <label asp-for="IsEnabled" class="form-check-label">
+                    Is poll enabled? <br/>(warning: having a date range overrides this toggle, if you want to disable prematurely - remove the dates)
+                </label>
+            </div>
+
+            <div class="row g-2 mb-4">
+                <div class="col">
+                    <label asp-for="StartsAt" class="form-label">Opens at (UTC)</label>
+                    <input asp-for="StartsAt" class="form-control" type="datetime-local" />
+                </div>
+                <div class="col">
+                    <label asp-for="EndsAt" class="form-label">Closes at (UTC)</label>
+                    <input asp-for="EndsAt" class="form-control" type="datetime-local" />
+                </div>
+            </div>
+
+            <h4 class="mb-2">Answers</h4>
+
+            <div id="answers-wrapper">
+                @for (int i = 0; i < Model.Answers.Count; i++)
+                {
+                    <div class="mb-2 answer-row" data-index="@i">
+                        <!-- hidden keys that MUST be posted back -->
+                        <input type="hidden" name="Answers[@i].Id" value="@Model.Answers[i].Id" />
+                        <input type="hidden" name="Answers[@i].IsDeleted" value="false" class="is-deleted" />
+
+                        <input type="text"
+                               name="Answers[@i].Value"
+                               value="@Model.Answers[i].Value"
+                               class="form-control d-inline-block w-75" />
+
+                        <button type="button"
+                                class="btn btn-outline-danger btn-sm ms-2 remove-answer">
+                            &times;
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <button type="button" id="add-answer" class="btn btn-outline-secondary mb-3">
+                + Add another answer
+            </button>
+
+            <!-- save / nav --------------------------------------------------->
+            <div>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const wrapper = document.getElementById('answers-wrapper');
+            const addBtn  = document.getElementById('add-answer');
+
+            /* template for a brand-new row */
+            const tmpl = idx => `
+                <div class="mb-2 answer-row" data-index="${idx}">
+                    <input type="hidden" name="Answers[${idx}].Id"        value="0" />
+                    <input type="hidden" name="Answers[${idx}].IsDeleted" value="false" class="is-deleted" />
+
+                    <input  type="text"
+                            name="Answers[${idx}].Value"
+                            class="form-control d-inline-block w-75"
+                            placeholder="Answer ${idx + 1}" />
+
+                    <button type="button"
+                            class="btn btn-outline-danger btn-sm ms-2 remove-answer">
+                        &times;
+                    </button>
+                </div>`;
+
+            /* add row */
+            addBtn.addEventListener('click', () => {
+                const idx = wrapper.querySelectorAll('.answer-row').length;
+                wrapper.insertAdjacentHTML('beforeend', tmpl(idx));
+            });
+
+            /* flag row for deletion */
+            wrapper.addEventListener('click', e => {
+                if (!e.target.closest('.remove-answer')) return;
+
+                const row = e.target.closest('.answer-row');
+                row.querySelector('.is-deleted').value = 'true';
+                row.style.display = 'none';
+            });
+        })();
+    </script>
+}

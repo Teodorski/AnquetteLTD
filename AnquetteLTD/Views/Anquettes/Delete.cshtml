@@ -1,0 +1,30 @@
+﻿@model AnquetteLTD.Models.Anquette
+@{
+    ViewData["Title"] = "Delete poll";
+}
+
+<h2 class="mb-3 text-danger">Delete poll</h2>
+
+<div class="alert alert-warning">
+    <strong>This action cannot be undone.</strong> Deleting this poll will <em>permanently</em> remove:
+    <ul class="mb-0">
+        <li>All configured answers (<span>@Model.Answers.Count</span>)</li>
+        <li>All submissions / votes (<span>@Model.Submissions.Count</span>)</li>
+    </ul>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Description</dt>
+    <dd class="col-sm-9">@Model.Description</dd>
+
+    <dt class="col-sm-3">Anonymous voting</dt>
+    <dd class="col-sm-9">@(Model.AllowAnonymous ? "✔︎ allowed" : "✖︎ authenticated only")</dd>
+
+    <dt class="col-sm-3">Status</dt>
+    <dd class="col-sm-9">@(Model.IsEnabled ? "Enabled" : "Disabled")</dd>
+</dl>
+
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <button type="submit" class="btn btn-danger me-2">Delete forever</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+</form>

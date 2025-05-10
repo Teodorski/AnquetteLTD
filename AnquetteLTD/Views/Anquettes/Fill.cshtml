@@ -1,0 +1,48 @@
+﻿@model AnquetteLTD.ViewModels.AnquetteVoteViewModel
+
+@{
+    ViewData["Title"] = "Vote";
+    var disabledAttr = Model.IsOpen ? "" : "disabled";
+}
+
+<h2 class="mb-3">@Model.Description</h2>
+
+<form asp-action="Fill" asp-route-id="@Model.AnquetteId">
+    <input type="hidden" asp-for="AnquetteId" />
+
+    @if (Model.IsMultipleChoice)
+    {
+        foreach (var opt in Model.Options)
+        {
+                            <div class="form-check mb-2">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="SelectedAnswerIds"
+                                       value="@opt.Id" @disabledAttr />
+                                <label class="form-check-label">@opt.Value</label>
+                            </div>
+        }
+    }
+    else
+    {
+        foreach (var opt in Model.Options)
+        {
+                            <div class="form-check mb-2">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="SelectedAnswerIds"
+                                       value="@opt.Id" @disabledAttr />
+                                <label class="form-check-label">@opt.Value</label>
+                            </div>
+        }
+    }
+
+    <button type="submit" class="btn btn-primary mt-3" @disabledAttr>Submit vote</button>
+
+    @if (!Model.IsOpen)
+    {
+                <p class="text-danger mt-2">Voting is closed for this poll.</p>
+    }
+
+    <a asp-action="Details" asp-route-id="@Model.AnquetteId" class="btn btn-secondary mt-3">Back to details</a>
+</form>

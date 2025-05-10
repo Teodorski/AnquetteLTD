@@ -1,0 +1,49 @@
+﻿@model IEnumerable<AnquetteLTD.Models.Anquette>
+@{
+    ViewData["Title"] = "My polls";
+}
+
+<h2>
+    @ViewData["Title"]
+    @* Show button only to authenticated users *@
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            + Create poll
+        </a>
+    }
+</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You haven’t created any polls yet.
+        <a asp-action="Create" class="alert-link">Create one now.</a>
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th class="text-center">Answers</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var poll in Model)
+            {
+                <tr>
+                    <td>@poll.Description</td>
+                    <td class="text-center">@poll.Answers.Count</td>
+                    <td class="text-end">
+                        <a asp-action="Details" asp-route-id="@poll.Id" class="btn btn-sm btn-secondary">Details</a>
+                        <a asp-action="Edit" asp-route-id="@poll.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@poll.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
