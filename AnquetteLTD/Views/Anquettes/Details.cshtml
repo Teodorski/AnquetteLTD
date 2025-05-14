@@ -18,12 +18,12 @@
 
     <dt class="col-sm-3">Multiple choice</dt>
     <dd class="col-sm-9">
-        @(Model.IsMultipleChoice ? "✔︎ yes" : "— no")
+        @(Model.IsMultipleChoice ? "✔︎" : "✖︎")
     </dd>
 
     <dt class="col-sm-3">Anonymous voting</dt>
     <dd class="col-sm-9">
-        @(Model.AllowAnonymous ? "✔︎ allowed" : "✖︎ authenticated only")
+        @(Model.AllowAnonymous ? "✔︎" : "✖︎")
     </dd>
 
     <dt class="col-sm-3">Status</dt>
