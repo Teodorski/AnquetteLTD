@@ -1,8 +1,75 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome to AnquetteLTD";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- Hero / Jumbotron -->
+<div class="bg-light p-5 rounded-3 mb-4 shadow-sm">
+    <h1 class="display-5 fw-bold">AnquetteLTD</h1>
+    <p class="lead mb-4">Create polls in seconds, share them with friends or classmates, and see the results come alive.</p>
+
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <a asp-controller="Anquettes" asp-action="Create" class="btn btn-primary btn-lg me-2">Create a poll</a>
+        <a asp-controller="Anquettes" asp-action="My" class="btn btn-outline-secondary btn-lg">My polls</a>
+    }
+    else
+    {
+        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg me-2">Sign in</a>
+        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-secondary btn-lg">Register</a>
+    }
+</div>
+
+<!-- Feature cards -->
+<div class="row gy-4">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Browse polls</h5>
+                <p class="card-text">Vote on public polls from the community or just see what others think.</p>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a asp-controller="Anquettes" asp-action="Index" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Real‑time results</h5>
+                <p class="card-text">Charts update as votes come in, so you can keep track of opinions at a glance.</p>
+            </div>
+            <!-- link visible only if logged in, otherwise points to browse -->
+            <div class="card-footer bg-transparent border-0">
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <a asp-controller="Anquettes" asp-action="My" class="stretched-link"></a>
+                }
+                else
+                {
+                    <a asp-controller="Anquettes" asp-action="Index" class="stretched-link"></a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">No account? No problem.</h5>
+                <p class="card-text">Many polls allow anonymous voting—jump straight in without signing up.</p>
+            </div>
+            <div class="card-footer bg-transparent border-0">
+                <a asp-controller="Anquettes" asp-action="Index" class="stretched-link"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer CTA -->
+<div class="alert alert-info mt-5">
+    <div class="d-flex align-items-center">
+        <div class="me-3 fs-3">🗳️</div>
+        <div>
+            <strong>Tip:</strong> Use the navigation bar above to manage polls, view results, or explore what others have created!
+        </div>
+    </div>
 </div>
